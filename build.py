@@ -168,6 +168,8 @@ def main():
 Filings via SEC EDGAR. Keine Anlageberatung, keine Gewaehr auf Richtigkeit.</footer>
 </div></body></html>"""
 
+    page = clock.inject(page)
+    
     os.makedirs(os.path.dirname(C.OUT), exist_ok=True)
     with open(C.OUT, "w", encoding="utf-8") as fh:
         fh.write(page)
