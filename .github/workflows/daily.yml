@@ -1,0 +1,38 @@
+name: Daily Build
+
+on:
+  schedule:
+    # ACHTUNG: GitHub rechnet in UTC. 06:00 UTC = 07:00 Winterzeit / 08:00 Sommerzeit.
+    - cron: "0 6 * * 1-5"
+  workflow_dispatch:        # erlaubt den Start per Knopfdruck
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Seite bauen
+        env:
+          FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}
+          MARKETAUX_KEY: ${{ secrets.MARKETAUX_KEY }}
+        run: python build.py
+
+      - name: Ergebnis committen
+        run: |
+          git config user.name "hmfs-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add docs/index.html
+          git diff --quiet --cached && echo "keine Aenderung" && exit 0
+          git commit -m "daily build $(date -u +%F)"
+          git push
