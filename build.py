@@ -6,6 +6,7 @@ import os
 
 import config as C
 import sources as S
+import clock 
 
 CSS = """
 :root{--bg:#0b0e14;--card:#141822;--bd:#242b3a;--ink:#e6e9ef;--ink2:#99a3b8;
